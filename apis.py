@@ -5,10 +5,14 @@ import os
 import subprocess
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+from tkinter import *
 import time
 
 # authentication
 auth = None
+text = None
+root = None
+mes = ""
 
 def setup(filename):
 	#read and store key information
@@ -41,10 +45,23 @@ def insta(text, url, usr, psw):
 	print(command)
 	os.system(command)
 
+def get_text():
+	global text, root, mes
+	t = text.get("1.0", "end-1c")
+	print(t)
+	mes = t
+	root.destroy()
+
 def main():
+	global text, root, mes
 	consumer_key, consumer_secret, access_token, access_token_secret, usr, psw = setup("keys.txt")
 	options = input("Type (tweet, insta, both): ")
-	text = input("Text: ")
+	root=Tk("Text Editor")
+	text=Text(root)
+	text.grid()
+	button=Button(root, text="Submit", command=get_text) 
+	button.grid()
+	root.mainloop()
 	media = input("Media file (y or n): ")
 	filename = None
 	if (media == "y"):
@@ -56,13 +73,13 @@ def main():
 			return
 	if (options == "tweet" or options == "both"):
 		try:
-			tweet(text, filename, consumer_key, consumer_secret, access_token, access_token_secret)
+			tweet(mes, filename, consumer_key, consumer_secret, access_token, access_token_secret)
 		except Exception as e:
 			print(e)
 		
 	if (options == "insta" or options == "both"):
 		try:
-			insta(text, filename, usr, psw)
+			insta(mes, filename, usr, psw)
 		except Exception as e:
 			print(e)
 		
